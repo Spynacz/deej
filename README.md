@@ -18,24 +18,30 @@ deej consists of a [lightweight desktop client](#features) written in Go, and an
 
 ## Table of contents
 
-- [Features](#features)
-- [How it works](#how-it-works)
-  - [Hardware](#hardware)
-    - [Schematic](#schematic)
-  - [Software](#software)
-- [Slider mapping (configuration)](#slider-mapping-configuration)
-- [Build your own!](#build-your-own)
-  - [FAQ](#faq)
-  - [Build video](#build-video)
-  - [Bill of Materials](#bill-of-materials)
-  - [Thingiverse collection](#thingiverse-collection)
-  - [Build procedure](#build-procedure)
-- [How to run](#how-to-run)
-  - [Requirements](#requirements)
-  - [Download and installation](#download-and-installation)
-  - [Building from source](#building-from-source)
-- [Community](#community)
-- [License](#license)
+- [deej](#deej)
+  - [Table of contents](#table-of-contents)
+  - [Features](#features)
+  - [How it works](#how-it-works)
+    - [Hardware](#hardware)
+      - [Schematic](#schematic)
+    - [Software](#software)
+  - [Slider mapping (configuration)](#slider-mapping-configuration)
+  - [Build your own!](#build-your-own)
+    - [FAQ](#faq)
+    - [Build video](#build-video)
+    - [Bill of Materials](#bill-of-materials)
+    - [Thingiverse collection](#thingiverse-collection)
+    - [Build procedure](#build-procedure)
+  - [How to run](#how-to-run)
+    - [Requirements](#requirements)
+      - [Windows](#windows)
+      - [Linux](#linux)
+    - [Download and installation](#download-and-installation)
+    - [Building from source](#building-from-source)
+  - [Community](#community)
+    - [Donations](#donations)
+    - [Contributing](#contributing)
+  - [License](#license)
 
 ## Features
 
@@ -46,7 +52,7 @@ deej is written in Go and [distributed](https://github.com/omriharel/deej/releas
   - Bind the master channel
   - Bind "system sounds" (on Windows)
   - Bind specific audio devices by name (on Windows)
-  - Bind currently active app (on Windows)
+  - Bind currently active app
   - Bind all other unassigned apps
 - Control your microphone's input level
 - Lightweight desktop client, consuming around 10MB of memory
@@ -106,7 +112,7 @@ noise_reduction: default
 - `master` is a special option to control the master volume of the system _(uses the default playback device)_
 - `mic` is a special option to control your microphone's input level _(uses the default recording device)_
 - `deej.unmapped` is a special option to control all apps that aren't bound to any slider ("everything else")
-- On Windows, `deej.current` is a special option to control whichever app is currently in focus
+- `deej.current` is a special option to control whichever app is currently in focus
 - On Windows, you can specify a device's full name, i.e. `Speakers (Realtek High Definition Audio)`, to bind that device's level to a slider. This doesn't conflict with the default `master` and `mic` options, and works for both input and output devices.
   - Be sure to use the full device name, as seen in the menu that comes up when left-clicking the speaker icon in the tray menu
 - `system` is a special option on Windows to control the "System sounds" volume in the Windows mixer
