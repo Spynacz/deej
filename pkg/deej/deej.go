@@ -13,7 +13,6 @@ import (
 )
 
 const (
-
 	// when this is set to anything, deej won't use a tray icon
 	envNoTray = "DEEJ_NO_TRAY_ICON"
 )
@@ -109,7 +108,8 @@ func (d *Deej) Initialize() error {
 
 	} else {
 		d.setupInterruptHandler()
-		d.initializeTray(d.run)
+		// d.initializeTray(d.run)
+		d.run()
 	}
 
 	return nil
@@ -199,7 +199,7 @@ func (d *Deej) stop() error {
 		return fmt.Errorf("release session map: %w", err)
 	}
 
-	d.stopTray()
+	// d.stopTray()
 
 	// attempt to sync on exit - this won't necessarily work but can't harm
 	d.logger.Sync()
