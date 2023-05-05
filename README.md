@@ -79,7 +79,7 @@ deej is written in Go and [distributed](https://github.com/omriharel/deej/releas
 
 ## Slider mapping (configuration)
 
-deej uses a simple YAML-formatted configuration file named [`config.yaml`](./config.yaml), placed alongside the deej executable.
+deej uses a simple YAML-formatted configuration file named [`config.yaml`](./config.yaml). It can be placed alongside the deej executable or you can provide a path to it with a command line argument (--config PATH).
 
 The config file determines which applications (and devices) are mapped to which sliders, and which parameters to use for the connection to the Arduino board, as well as other user preferences.
 

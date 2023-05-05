@@ -38,13 +38,10 @@ type CanonicalConfig struct {
 }
 
 const (
-	userConfigFilepath     = "config.yaml"
 	internalConfigFilepath = "preferences.yaml"
 
 	userConfigName     = "config"
 	internalConfigName = "preferences"
-
-	userConfigPath = "."
 
 	configType = "yaml"
 
@@ -58,6 +55,9 @@ const (
 	defaultBaudRate = 9600
 )
 
+var userConfigPath = "."
+var userConfigFilepath = "config.yaml"
+
 // has to be defined as a non-constant because we're using path.Join
 var internalConfigPath = path.Join(".", logDirectory)
 
@@ -69,7 +69,7 @@ var defaultSliderMapping = func() *sliderMap {
 }()
 
 // NewConfig creates a config instance for the deej object and sets up viper instances for deej's config files
-func NewConfig(logger *zap.SugaredLogger, notifier Notifier) (*CanonicalConfig, error) {
+func NewConfig(logger *zap.SugaredLogger, notifier Notifier, configPath string) (*CanonicalConfig, error) {
 	logger = logger.Named("config")
 
 	cc := &CanonicalConfig{
@@ -77,6 +77,14 @@ func NewConfig(logger *zap.SugaredLogger, notifier Notifier) (*CanonicalConfig, 
 		notifier:           notifier,
 		reloadConsumers:    []chan bool{},
 		stopWatcherChannel: make(chan bool),
+	}
+
+	logger.Debug("Provided config path: ", configPath)
+	if len(configPath) == 0 {
+		logger.Debug("Assuming config is in the same directory")
+	} else {
+		userConfigPath = path.Dir(configPath)
+		userConfigFilepath = path.Base(configPath)
 	}
 
 	// distinguish between the user-provided config (config.yaml) and the internal config (logs/preferences.yaml)

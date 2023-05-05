@@ -13,11 +13,15 @@ var (
 	buildType  string
 
 	verbose bool
+
+	configPath string
 )
 
 func init() {
 	flag.BoolVar(&verbose, "verbose", false, "show verbose logs (useful for debugging serial)")
 	flag.BoolVar(&verbose, "v", false, "shorthand for --verbose")
+	flag.StringVar(&configPath, "config", "", "path to the configuration file")
+	flag.StringVar(&configPath, "c", "", "shorthand for --config")
 	flag.Parse()
 }
 
@@ -43,7 +47,7 @@ func main() {
 	}
 
 	// create the deej instance
-	d, err := deej.NewDeej(logger, verbose)
+	d, err := deej.NewDeej(logger, verbose, configPath)
 	if err != nil {
 		named.Fatalw("Failed to create deej object", "error", err)
 	}
