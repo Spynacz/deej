@@ -14,7 +14,8 @@ const maxVolume = 0x10000
 
 var errNoSuchProcess = errors.New("No such process")
 
-type paSession struct {
+// Session for a Sink input, (individual programs/processes)
+type paProcessSession struct {
 	baseSession
 
 	processName string
@@ -25,7 +26,8 @@ type paSession struct {
 	sinkInputChannels byte
 }
 
-type masterSession struct {
+// Session for audio device (Can be either Sink or Source)
+type paDeviceSession struct {
 	baseSession
 
 	client *proto.Client
@@ -35,15 +37,15 @@ type masterSession struct {
 	isOutput       bool
 }
 
-func newPASession(
+func newPAProcessSession(
 	logger *zap.SugaredLogger,
 	client *proto.Client,
 	sinkInputIndex uint32,
 	sinkInputChannels byte,
 	processName string,
-) *paSession {
+) *paProcessSession {
 
-	s := &paSession{
+	s := &paProcessSession{
 		client:            client,
 		sinkInputIndex:    sinkInputIndex,
 		sinkInputChannels: sinkInputChannels,
@@ -60,15 +62,17 @@ func newPASession(
 	return s
 }
 
-func newMasterSession(
+func newPADeviceSession(
 	logger *zap.SugaredLogger,
 	client *proto.Client,
 	streamIndex uint32,
 	streamChannels byte,
 	isOutput bool,
-) *masterSession {
+	isMaster bool,
+	name string,
+) *paDeviceSession {
 
-	s := &masterSession{
+	s := &paDeviceSession{
 		client:         client,
 		streamIndex:    streamIndex,
 		streamChannels: streamChannels,
@@ -77,10 +81,14 @@ func newMasterSession(
 
 	var key string
 
-	if isOutput {
-		key = masterSessionName
+	if isMaster {
+		if isOutput {
+			key = masterSessionName
+		} else {
+			key = inputSessionName
+		}
 	} else {
-		key = inputSessionName
+		key = name
 	}
 
 	s.logger = logger.Named(key)
@@ -93,7 +101,7 @@ func newMasterSession(
 	return s
 }
 
-func (s *paSession) GetVolume() float32 {
+func (s *paProcessSession) GetVolume() float32 {
 	request := proto.GetSinkInputInfo{
 		SinkInputIndex: s.sinkInputIndex,
 	}
@@ -108,7 +116,7 @@ func (s *paSession) GetVolume() float32 {
 	return level
 }
 
-func (s *paSession) SetVolume(v float32) error {
+func (s *paProcessSession) SetVolume(v float32) error {
 	volumes := createChannelVolumes(s.sinkInputChannels, v)
 	request := proto.SetSinkInputVolume{
 		SinkInputIndex: s.sinkInputIndex,
@@ -125,15 +133,15 @@ func (s *paSession) SetVolume(v float32) error {
 	return nil
 }
 
-func (s *paSession) Release() {
+func (s *paProcessSession) Release() {
 	s.logger.Debug("Releasing audio session")
 }
 
-func (s *paSession) String() string {
+func (s *paProcessSession) String() string {
 	return fmt.Sprintf(sessionStringFormat, s.humanReadableDesc, s.GetVolume())
 }
 
-func (s *masterSession) GetVolume() float32 {
+func (s *paDeviceSession) GetVolume() float32 {
 	var level float32
 
 	if s.isOutput {
@@ -165,7 +173,7 @@ func (s *masterSession) GetVolume() float32 {
 	return level
 }
 
-func (s *masterSession) SetVolume(v float32) error {
+func (s *paDeviceSession) SetVolume(v float32) error {
 	var request proto.RequestArgs
 
 	volumes := createChannelVolumes(s.streamChannels, v)
@@ -195,11 +203,11 @@ func (s *masterSession) SetVolume(v float32) error {
 	return nil
 }
 
-func (s *masterSession) Release() {
+func (s *paDeviceSession) Release() {
 	s.logger.Debug("Releasing audio session")
 }
 
-func (s *masterSession) String() string {
+func (s *paDeviceSession) String() string {
 	return fmt.Sprintf(sessionStringFormat, s.humanReadableDesc, s.GetVolume())
 }
 
