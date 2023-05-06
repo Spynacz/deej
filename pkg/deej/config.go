@@ -27,6 +27,8 @@ type CanonicalConfig struct {
 
 	VolumeStep int
 
+	CurrentIgnoreMapped bool
+
 	logger             *zap.SugaredLogger
 	notifier           Notifier
 	stopWatcherChannel chan bool
@@ -45,11 +47,12 @@ const (
 
 	configType = "yaml"
 
-	configKeySliderMapping = "slider_mapping"
-	configKeyInvertSliders = "invert_sliders"
-	configKeyCOMPort       = "com_port"
-	configKeyBaudRate      = "baud_rate"
-	configKeyVolumeStep    = "volume_step"
+	configKeySliderMapping       = "slider_mapping"
+	configKeyInvertSliders       = "invert_sliders"
+	configKeyCOMPort             = "com_port"
+	configKeyBaudRate            = "baud_rate"
+	configKeyVolumeStep          = "volume_step"
+	configKeyCurrentIgnoreMapped = "current_ignore_mapped"
 
 	defaultCOMPort  = "COM4"
 	defaultBaudRate = 9600
@@ -97,6 +100,8 @@ func NewConfig(logger *zap.SugaredLogger, notifier Notifier, configPath string) 
 	userConfig.SetDefault(configKeyInvertSliders, false)
 	userConfig.SetDefault(configKeyCOMPort, defaultCOMPort)
 	userConfig.SetDefault(configKeyBaudRate, defaultBaudRate)
+	userConfig.SetDefault(configKeyVolumeStep, 3)
+	userConfig.SetDefault(configKeyCurrentIgnoreMapped, false)
 
 	internalConfig := viper.New()
 	internalConfig.SetConfigName(internalConfigName)
@@ -154,7 +159,9 @@ func (cc *CanonicalConfig) Load() error {
 	cc.logger.Infow("Config values",
 		"sliderMapping", cc.SliderMapping,
 		"connectionInfo", cc.ConnectionInfo,
-		"invertSliders", cc.InvertSliders)
+		"invertSliders", cc.InvertSliders,
+		"volumeStep", cc.VolumeStep,
+		"currentIgnoreMapped", cc.CurrentIgnoreMapped)
 
 	return nil
 }
@@ -246,6 +253,7 @@ func (cc *CanonicalConfig) populateFromVipers() error {
 
 	cc.InvertSliders = cc.userConfig.GetBool(configKeyInvertSliders)
 	cc.VolumeStep = cc.userConfig.GetInt(configKeyVolumeStep)
+	cc.CurrentIgnoreMapped = cc.userConfig.GetBool(configKeyCurrentIgnoreMapped)
 
 	cc.logger.Debug("Populated config fields from vipers")
 

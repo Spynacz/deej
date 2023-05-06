@@ -302,6 +302,19 @@ func (m *sessionMap) applyTargetTransform(specialTargetName string) []string {
 			return nil
 		}
 
+		// check if current window's process is explicitly mapped to a slider
+		if m.deej.config.CurrentIgnoreMapped {
+			for _, target := range currentWindowProcessNames {
+				sessions, _ := m.get(target)
+				for _, session := range sessions {
+					if m.sessionMapped(session) {
+						m.logger.Debug("Found explicit mapping for current window, ignoring")
+						return nil
+					}
+				}
+			}
+		}
+
 		// we could have gotten a non-lowercase names from that, so let's ensure we return ones that are lowercase
 		for targetIdx, target := range currentWindowProcessNames {
 			currentWindowProcessNames[targetIdx] = strings.ToLower(target)

@@ -52,3 +52,6 @@ baud_rate: 9600
 
 # set percentage points increment to use when changing volume
 volume_step: 1
+
+# whether to change volume of current window if it's also explicitly mapped elsewhere
+current_ignore_mapped: true
