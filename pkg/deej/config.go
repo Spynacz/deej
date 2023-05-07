@@ -87,7 +87,7 @@ func NewConfig(logger *zap.SugaredLogger, notifier Notifier, configPath string) 
 		logger.Debug("Assuming config is in the same directory")
 	} else {
 		userConfigPath = path.Dir(configPath)
-		userConfigFilepath = path.Base(configPath)
+		userConfigFilepath = configPath
 	}
 
 	// distinguish between the user-provided config (config.yaml) and the internal config (logs/preferences.yaml)
