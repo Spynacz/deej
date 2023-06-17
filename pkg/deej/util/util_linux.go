@@ -28,8 +28,8 @@ func getCurrentWindowProcessNames() ([]string, error) {
 	// Use xprop to get currently active window's PID and use that to get it's process's binary from /proc.
 	// Messy and probably could be replaced with some proper go api but works for now.
 	cmd, err := exec.Command("sh", "-c",
-		"basename $(readlink /proc/$(xprop -id $(xprop -root _NET_ACTIVE_WINDOW | cut -d ' ' -f 5) "+
-			"_NET_WM_PID | awk '{print $NF}')/exe)").Output()
+		"basename \"$(readlink /proc/$(xprop -id $(xprop -root _NET_ACTIVE_WINDOW | cut -d ' ' -f 5) "+
+			"_NET_WM_PID | awk '{print $NF}')/exe)\"").Output()
 
 	if err != nil {
 		return nil, fmt.Errorf("Error getting current process name %w", err)
