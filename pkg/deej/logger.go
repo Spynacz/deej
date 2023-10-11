@@ -15,7 +15,7 @@ const (
 	buildTypeDev     = "dev"
 	buildTypeRelease = "release"
 
-	logDirectory = "logs"
+	logDirectory = "/var/log/deej"
 	logFilename  = "deej-latest-run.log"
 )
 
