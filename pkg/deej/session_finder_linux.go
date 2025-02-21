@@ -140,10 +140,17 @@ func (sf *paSessionFinder) enumerateAndAddSessions(sessions *[]Session) error {
 		name, ok := info.Properties["application.process.binary"]
 
 		if !ok {
-			sf.logger.Warnw("Failed to get sink input's process name",
-				"sinkInputIndex", info.SinkInputIndex, "mediaName", info.MediaName)
+			name, ok = info.Properties["node.name"]
+			if !ok {
+				name, ok = info.Properties["device.description"]
+				if !ok {
+					sf.logger.Warnw("Failed to get sink input's process name",
+						"sinkInputIndex", info.SinkInputIndex, "mediaName", info.MediaName)
 
-			continue
+					continue
+				}
+			}
+
 		}
 
 		// create the deej session object
